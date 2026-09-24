@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#10130f">
+	<meta name="description" content="NeoSpider network intelligence workspace.">
+	<title>NeoSpider | Network intelligence</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+		:root {
+			--ink: #e9f1df;
+			--muted: #8a9680;
+			--line: rgba(190, 220, 170, .14);
+			--panel: rgba(22, 28, 19, .82);
+			--acid: #c8f169;
+			--acid-deep: #8fac3d;
+			--orange: #ff9b61;
+			--canvas: #10130f;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-width: 320px;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 79% 12%, rgba(104, 130, 51, .18), transparent 26rem),
+				linear-gradient(135deg, #10130f 0%, #141a12 54%, #0d110d 100%);
+			font-family: 'Space Grotesk', sans-serif;
+		}
+
+		body::before {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			opacity: .22;
+			background-image: linear-gradient(rgba(192, 225, 168, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(192, 225, 168, .045) 1px, transparent 1px);
+			background-size: 48px 48px;
+			content: '';
+			mask-image: linear-gradient(to bottom, black, transparent 80%);
+		}
+
+		.shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; }
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 88px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; }
+		.brand-mark { position: relative; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--acid); border-radius: 50%; color: var(--acid); font: 500 15px 'DM Mono', monospace; }
+		.brand-mark::after { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 14px var(--acid); content: ''; }
+		.brand-name { font-size: 17px; font-weight: 600; letter-spacing: -.03em; }
+		.brand-name span { color: var(--acid); }
+
+		nav { display: flex; align-items: center; gap: 30px; }
+		nav a { color: var(--muted); font-size: 13px; text-decoration: none; }
+		nav a:hover { color: var(--ink); }
+		.status { display: flex; align-items: center; gap: 8px; color: var(--acid); font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+		.status i { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 10px var(--acid); }
+
+		main { padding: 76px 0 58px; }
+		.eyebrow { margin: 0 0 18px; color: var(--acid); font: 11px 'DM Mono', monospace; letter-spacing: .16em; text-transform: uppercase; }
+		h1 { max-width: 780px; margin: 0; font-size: clamp(52px, 8vw, 104px); line-height: .9; letter-spacing: -.085em; font-weight: 600; }
+		h1 em { color: var(--acid); font-style: normal; }
+		.intro { max-width: 465px; margin: 28px 0 36px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+
+		.actions { display: flex; align-items: center; gap: 14px; }
+		button { border: 0; font: 500 13px 'Space Grotesk', sans-serif; cursor: pointer; }
+		.primary { padding: 14px 20px; border-radius: 3px; color: #161b11; background: var(--acid); }
+		.primary:hover { background: #d9ff81; }
+		.secondary { padding: 13px 18px; color: var(--ink); border: 1px solid var(--line); border-radius: 3px; background: transparent; }
+		.secondary:hover { border-color: var(--acid-deep); }
+
+		.workspace { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, .8fr); gap: 16px; margin-top: 76px; }
+		.panel { border: 1px solid var(--line); background: var(--panel); }
+		.map { position: relative; min-height: 390px; overflow: hidden; background: radial-gradient(circle at 50% 48%, rgba(159, 194, 80, .1), transparent 22rem); }
+		.map::before { position: absolute; inset: 0; opacity: .25; background: linear-gradient(115deg, transparent 49.8%, var(--acid) 50%, transparent 50.2%), linear-gradient(25deg, transparent 49.8%, var(--acid) 50%, transparent 50.2%); background-size: 100% 100%; content: ''; }
+		.map-head, .map-foot { position: absolute; z-index: 2; display: flex; justify-content: space-between; width: 100%; padding: 17px 20px; color: var(--muted); font: 11px 'DM Mono', monospace; letter-spacing: .06em; }
+		.map-head { top: 0; border-bottom: 1px solid var(--line); }
+		.map-foot { bottom: 0; border-top: 1px solid var(--line); }
+		.map-foot strong { color: var(--acid); font-weight: 400; }
+		.node { position: absolute; width: 10px; height: 10px; border: 2px solid var(--acid); border-radius: 50%; background: #17200e; box-shadow: 0 0 0 7px rgba(200, 241, 105, .07), 0 0 18px rgba(200, 241, 105, .7); animation: pulse 2.8s infinite ease-in-out; }
+		.node::after { position: absolute; top: 2px; left: 2px; width: 2px; height: 2px; border-radius: 50%; background: var(--acid); content: ''; }
+		.node.one { top: 39%; left: 31%; } .node.two { top: 64%; left: 54%; animation-delay: .7s; } .node.three { top: 32%; left: 71%; animation-delay: 1.3s; } .node.four { top: 70%; left: 78%; animation-delay: 1.8s; }
+		.thread { position: absolute; height: 1px; transform-origin: left center; background: linear-gradient(90deg, rgba(200,241,105,.7), transparent); }
+		.thread.a { top: 41%; left: 32%; width: 27%; transform: rotate(28deg); } .thread.b { top: 66%; left: 55%; width: 25%; transform: rotate(-26deg); } .thread.c { top: 34%; left: 72%; width: 21%; transform: rotate(108deg); }
+		@keyframes pulse { 50% { transform: scale(1.35); box-shadow: 0 0 0 11px rgba(200, 241, 105, .03), 0 0 25px rgba(200, 241, 105, .8); } }
+
+		.metrics { display: grid; grid-template-rows: repeat(3, 1fr); }
+		.metric { display: flex; flex-direction: column; justify-content: space-between; min-height: 128px; padding: 20px; border-bottom: 1px solid var(--line); }
+		.metric:last-child { border-bottom: 0; }
+		.metric-label { color: var(--muted); font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+		.metric-value { margin-top: 18px; font-size: 36px; line-height: 1; letter-spacing: -.06em; }
+		.metric-value small { margin-left: 5px; color: var(--acid); font: 12px 'DM Mono', monospace; letter-spacing: 0; }
+
+		.footer-line { display: flex; justify-content: space-between; padding-top: 25px; color: var(--muted); font: 11px 'DM Mono', monospace; }
+		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .footer-line { gap: 12px; flex-direction: column; } }
+	</style>
+</head>
+<body>
+	<div class="shell">
+		<header>
+			<a class="brand" href="#top" aria-label="NeoSpider home">
+				<span class="brand-mark" aria-hidden="true">+</span>
+				<span class="brand-name">NEO<span>SPIDER</span></span>
+			</a>
+			<nav aria-label="Primary navigation">
+				<a href="#workspace">Workspace</a>
+				<a href="#activity">Activity</a>
+				<span class="status"><i></i>System online</span>
+			</nav>
+		</header>
+
+		<main id="top">
+			<p class="eyebrow">Network intelligence / 01</p>
+			<h1>See what<br>moves <em>beneath.</em></h1>
+			<p class="intro">NeoSpider maps the hidden relationships in your network, so signals become context and context becomes your next move.</p>
+			<div class="actions">
+				<button class="primary" type="button" onclick="document.getElementById('workspace').scrollIntoView({ behavior: 'smooth' })">Open workspace <span aria-hidden="true">↗</span></button>
+				<button class="secondary" type="button" onclick="window.alert('New scan is ready to configure.')">Start a scan</button>
+			</div>
+
+			<section class="workspace" id="workspace" aria-label="Network overview">
+				<div class="panel map" id="activity">
+					<div class="map-head"><span>LIVE TOPOLOGY</span><span>REGION / GLOBAL</span></div>
+					<span class="thread a" aria-hidden="true"></span><span class="thread b" aria-hidden="true"></span><span class="thread c" aria-hidden="true"></span>
+					<span class="node one" aria-label="Active node"></span><span class="node two" aria-label="Active node"></span><span class="node three" aria-label="Active node"></span><span class="node four" aria-label="Active node"></span>
+					<div class="map-foot"><span>LAST PULSE <strong>00:04 AGO</strong></span><span>ZOOM 1.4×</span></div>
+				</div>
+				<div class="panel metrics" aria-label="Network metrics">
+					<div class="metric"><span class="metric-label">Active nodes</span><span class="metric-value">2,841 <small>+12%</small></span></div>
+					<div class="metric"><span class="metric-label">Connections traced</span><span class="metric-value">18.6k <small>+8%</small></span></div>
+					<div class="metric"><span class="metric-label">Open signals</span><span class="metric-value">07 <small style="color: var(--orange)">needs review</small></span></div>
+				</div>
+			</section>
+
+			<div class="footer-line"><span>BUILD 2.4.0 / NEO CORE</span><span>© 2025 NEOSPIDER LABS</span></div>
+		</main>
+	</div>
+</body>
+</html>
