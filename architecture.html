@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#111416">
+	<meta name="description" content="Backend system architecture diagram for the NeoSpider website analytics tool.">
+	<title>NeoSpider | Backend architecture</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+		:root {
+			--ink: #f0f1ea;
+			--muted: #929b98;
+			--line: rgba(170, 205, 200, .16);
+			--panel: rgba(27, 32, 34, .82);
+			--acid: #c8f169;
+			--acid-deep: #7a9a2e;
+			--orange: #e0a054;
+			--canvas: #111416;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-width: 320px;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 79% 12%, rgba(159, 194, 80, .2), transparent 26rem),
+				linear-gradient(135deg, #111416 0%, #1b2022 54%, #0d1011 100%);
+			font-family: 'Space Grotesk', sans-serif;
+		}
+
+		body::before {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			opacity: .22;
+			background-image: linear-gradient(rgba(192, 225, 168, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(192, 225, 168, .045) 1px, transparent 1px);
+			background-size: 48px 48px;
+			content: '';
+			mask-image: linear-gradient(to bottom, black, transparent 80%);
+		}
+
+		.shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; }
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 88px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; }
+		.brand-mark { position: relative; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--acid); border-radius: 50%; color: var(--acid); font: 500 15px 'DM Mono', monospace; }
+		.brand-mark::after { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 14px var(--acid); content: ''; }
+		.brand-name { font-size: 17px; font-weight: 600; letter-spacing: -.03em; }
+		.brand-name span { color: var(--acid); }
+		nav a { color: var(--muted); font-size: 13px; text-decoration: none; }
+		nav a:hover { color: var(--ink); }
+
+		main { padding: 60px 0 70px; }
+		.eyebrow { margin: 0 0 18px; color: var(--acid); font: 11px 'DM Mono', monospace; letter-spacing: .16em; text-transform: uppercase; }
+		h1 { max-width: 780px; margin: 0; font-size: clamp(38px, 6vw, 64px); line-height: .98; letter-spacing: -.06em; font-weight: 600; }
+		h1 em { color: var(--acid); font-style: normal; }
+		.intro { max-width: 620px; margin: 22px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+		.diagram-panel { margin-top: 48px; padding: 28px; border: 1px solid var(--line); background: var(--panel); }
+		.diagram-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+		.diagram-panel-head h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+		.tag { padding: 6px 8px; color: var(--acid); border: 1px solid rgba(200, 241, 105, .35); font: 10px 'DM Mono', monospace; letter-spacing: .08em; }
+
+		svg { display: block; width: 100%; height: auto; }
+		.node-box { fill: #151c11; stroke: var(--line); stroke-width: 1; }
+		.node-box.highlight { stroke: var(--acid-deep); }
+		.node-title { fill: var(--ink); font: 600 15px 'Space Grotesk', sans-serif; }
+		.node-sub { fill: #929b98; font: 11px 'DM Mono', monospace; }
+		.node-index { fill: var(--acid); font: 10px 'DM Mono', monospace; letter-spacing: .06em; }
+		.flow-line { fill: none; stroke: rgba(200, 241, 105, .55); stroke-width: 1.5; }
+		.flow-line.dashed { stroke-dasharray: 4 4; stroke: rgba(224, 160, 84, .6); }
+		.flow-label { fill: var(--muted); font: 10px 'DM Mono', monospace; }
+		.arrowhead { fill: rgba(200, 241, 105, .8); }
+		.arrowhead.orange { fill: rgba(224, 160, 84, .8); }
+
+		.legend { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+		.legend-item { display: flex; align-items: center; gap: 8px; color: var(--muted); font: 11px 'DM Mono', monospace; }
+		.legend-swatch { display: inline-block; width: 22px; height: 2px; background: rgba(200, 241, 105, .8); }
+		.legend-swatch.dashed { background: none; border-top: 2px dashed rgba(224, 160, 84, .8); }
+
+		.notes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 16px; border: 1px solid var(--line); background: var(--line); }
+		.note-item { min-height: 140px; padding: 18px; background: #151c11; }
+		.note-item span { color: var(--acid); font: 10px 'DM Mono', monospace; letter-spacing: .08em; }
+		.note-item h3 { margin: 14px 0 8px; font-size: 14px; font-weight: 500; }
+		.note-item p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+		.footer-line { display: flex; justify-content: space-between; padding-top: 30px; margin-top: 40px; border-top: 1px solid var(--line); color: var(--muted); font: 11px 'DM Mono', monospace; }
+		.footer-line a { color: var(--muted); }
+
+		@media (max-width: 900px) {
+			.notes { grid-template-columns: 1fr 1fr; }
+		}
+		@media (max-width: 560px) {
+			.shell { width: min(100% - 32px, 1280px); }
+			.notes { grid-template-columns: 1fr; }
+			.diagram-panel { padding: 16px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="shell">
+		<header>
+			<a class="brand" href="index.html" aria-label="NeoSpider home">
+				<span class="brand-mark" aria-hidden="true">+</span>
+				<span class="brand-name">NEO<span>SPIDER</span></span>
+			</a>
+			<nav aria-label="Primary navigation">
+				<a href="index.html">Home</a>
+			</nav>
+		</header>
+
+		<main>
+			<p class="eyebrow">System design / 02</p>
+			<h1>Backend <em>architecture.</em></h1>
+			<p class="intro">A high-level view of how a request flows through the NeoSpider analytics backend — from the tracking script hitting the API, through storage and processing, to what the customer sees in their dashboard and exported reports.</p>
+
+			<div class="diagram-panel">
+				<div class="diagram-panel-head">
+					<h2>Request &amp; data flow</h2>
+					<span class="tag">Diagram</span>
+				</div>
+
+				<svg viewBox="0 0 1200 700" role="img" aria-labelledby="diagramTitle diagramDesc">
+					<title id="diagramTitle">NeoSpider backend system diagram</title>
+					<desc id="diagramDesc">Tracked website sends a tracking snippet with the site key and page tags to the API entry point, which receives dashboard/report requests, writes and reads from data storage, which feeds the analytics engine; the analytics engine powers the user dashboard and the report exporter, and also branches off into an AI pipeline that feeds the report exporter.</desc>
+
+					<defs>
+						<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+							<path d="M0,0 L10,5 L0,10 z" class="arrowhead"></path>
+						</marker>
+						<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+							<path d="M0,0 L10,5 L0,10 z" class="arrowhead orange"></path>
+						</marker>
+					</defs>
+
+					<!-- API Entry Point -->
+					<g>
+						<rect x="60" y="220" width="220" height="90" rx="3" class="node-box highlight"></rect>
+						<text x="80" y="248" class="node-index">01 / EDGE</text>
+						<text x="80" y="272" class="node-title">API entry point</text>
+						<text x="80" y="292" class="node-sub">Auth, rate limit, ingest</text>
+					</g>
+
+					<!-- Tracked Website -->
+					<g>
+						<rect x="60" y="40" width="220" height="90" rx="3" class="node-box"></rect>
+						<text x="80" y="68" class="node-index">00 / CLIENT</text>
+						<text x="80" y="92" class="node-title">Tracked website</text>
+						<text x="80" y="112" class="node-sub">Site key + page tags</text>
+					</g>
+
+					<!-- Data Storage -->
+					<g>
+						<rect x="450" y="60" width="220" height="90" rx="3" class="node-box"></rect>
+						<text x="470" y="88" class="node-index">02 / STORE</text>
+						<text x="470" y="112" class="node-title">Data storage</text>
+						<text x="470" y="132" class="node-sub">Events, sessions, sites</text>
+					</g>
+
+					<!-- Analytics Engine -->
+					<g>
+						<rect x="450" y="380" width="220" height="90" rx="3" class="node-box"></rect>
+						<text x="470" y="408" class="node-index">03 / PROCESS</text>
+						<text x="470" y="432" class="node-title">Analytics engine</text>
+						<text x="470" y="452" class="node-sub">Aggregation, trends, scoring</text>
+					</g>
+
+					<!-- User Dashboard -->
+					<g>
+						<rect x="840" y="220" width="220" height="90" rx="3" class="node-box"></rect>
+						<text x="860" y="248" class="node-index">04 / VIEW</text>
+						<text x="860" y="272" class="node-title">User dashboard</text>
+						<text x="860" y="292" class="node-sub">Live metrics &amp; charts</text>
+					</g>
+
+					<!-- Report Exporter -->
+					<g>
+						<rect x="840" y="380" width="220" height="90" rx="3" class="node-box"></rect>
+						<text x="860" y="408" class="node-index">05 / EXPORT</text>
+						<text x="860" y="432" class="node-title">Report exporter</text>
+						<text x="860" y="452" class="node-sub">PDF / CSV / email digest</text>
+					</g>
+
+					<!-- AI Pipeline (offshoot of analytics engine, feeds report exporter) -->
+					<g>
+						<rect x="645" y="560" width="220" height="90" rx="3" class="node-box highlight"></rect>
+						<text x="665" y="588" class="node-index">03A / AI</text>
+						<text x="665" y="612" class="node-title">AI pipeline</text>
+						<text x="665" y="632" class="node-sub">Summaries &amp; insights</text>
+					</g>
+
+					<!-- Tracked Website -> API (tracking snippet) -->
+					<path d="M 170 130 L 170 218" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="178" y="180" class="flow-label">snippet: site key + tags</text>
+
+					<!-- API -> Storage (write) -->
+					<path d="M 200 220 C 220 160, 320 130, 448 116" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="235" y="150" class="flow-label">write events</text>
+
+					<!-- Storage -> API (read, dashed for read path back on request) -->
+					<path d="M 448 132 C 320 150, 230 200, 210 240" class="flow-line dashed" marker-end="url(#arrow-orange)"></path>
+					<text x="230" y="205" class="flow-label" fill="var(--orange)">read on request</text>
+
+					<!-- Storage -> Analytics Engine -->
+					<path d="M 560 150 L 560 378" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="568" y="270" class="flow-label">raw data</text>
+
+					<!-- Analytics Engine -> Storage (write aggregates, dashed) -->
+					<path d="M 610 380 C 630 320, 630 190, 615 152" class="flow-line dashed" marker-end="url(#arrow-orange)"></path>
+					<text x="632" y="270" class="flow-label" fill="var(--orange)">aggregates</text>
+
+					<!-- Analytics Engine -> Dashboard -->
+					<path d="M 670 400 C 760 380, 820 320, 860 312" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="700" y="380" class="flow-label">metrics feed</text>
+
+					<!-- Analytics Engine -> Report Exporter -->
+					<path d="M 670 435 L 838 430" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="710" y="422" class="flow-label">scheduled/on-demand</text>
+
+					<!-- Analytics Engine -> AI Pipeline (offshoot) -->
+					<path d="M 590 470 C 610 505, 630 535, 655 558" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="600" y="525" class="flow-label">engine output</text>
+
+					<!-- AI Pipeline -> Report Exporter -->
+					<path d="M 800 560 C 850 525, 880 495, 900 472" class="flow-line" marker-end="url(#arrow)"></path>
+					<text x="845" y="525" class="flow-label">AI narrative</text>
+
+					<!-- Dashboard -> API (requests, dashed) -->
+					<path d="M 838 260 C 600 200, 320 190, 205 235" class="flow-line dashed" marker-end="url(#arrow-orange)"></path>
+					<text x="470" y="200" class="flow-label" fill="var(--orange)">dashboard requests</text>
+
+					<!-- Report Exporter -> API (export requests) -->
+					<path d="M 838 445 C 500 500, 250 400, 210 320" class="flow-line dashed" marker-end="url(#arrow-orange)"></path>
+					<text x="470" y="500" class="flow-label" fill="var(--orange)">export requests</text>
+				</svg>
+
+				<div class="legend">
+					<span class="legend-item"><span class="legend-swatch"></span> Write / push path</span>
+					<span class="legend-item"><span class="legend-swatch dashed"></span> Read / request path</span>
+				</div>
+			</div>
+
+			<div class="notes">
+				<div class="note-item">
+					<span>00 / CLIENT</span>
+					<h3>Tracked website</h3>
+					<p>Loads the NeoSpider tracking snippet, configured with the customer's site key and any custom page/event tags, and sends pageview and event calls to the API entry point.</p>
+				</div>
+				<div class="note-item">
+					<span>01 / EDGE</span>
+					<h3>API entry point</h3>
+					<p>Receives the tracking script's pageview and event calls, plus dashboard and export requests. Handles auth, rate limiting, and validation before anything touches storage.</p>
+				</div>
+				<div class="note-item">
+					<span>02 / STORE</span>
+					<h3>Data storage</h3>
+					<p>Durable store for raw events, sessions, and site configuration, alongside precomputed aggregates written back by the analytics engine.</p>
+				</div>
+				<div class="note-item">
+					<span>03 / PROCESS</span>
+					<h3>Analytics engine</h3>
+					<p>Aggregates raw events into trends, top pages, referrers, and scores. Runs on a schedule and on demand, writing results back to storage.</p>
+				</div>
+				<div class="note-item">
+					<span>04 / VIEW</span>
+					<h3>User dashboard</h3>
+					<p>Reads processed metrics through the API entry point to render live charts and summaries for signed-in customers.</p>
+				</div>
+				<div class="note-item">
+					<span>05 / EXPORT</span>
+					<h3>Report exporter</h3>
+					<p>Turns analytics engine output into PDF/CSV files and email digests, triggered on a schedule or by a manual request.</p>
+				</div>
+				<div class="note-item">
+					<span>03A / AI</span>
+					<h3>AI pipeline</h3>
+					<p>Branches off the analytics engine to generate plain-language summaries and insights, which the report exporter includes alongside the raw metrics.</p>
+				</div>
+			</div>
+
+			<div class="footer-line">
+				<span>NeoSpider &mdash; internal architecture reference</span>
+				<a href="index.html">&larr; Back to home</a>
+			</div>
+		</main>
+	</div>
+</body>
+</html>
