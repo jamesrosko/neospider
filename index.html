@@ -90,6 +90,7 @@
 		.map-foot strong { color: var(--acid); font-weight: 400; }
 		.node { position: absolute; width: 10px; height: 10px; border: 2px solid var(--acid); border-radius: 50%; background: #17200e; box-shadow: 0 0 0 7px rgba(200, 241, 105, .07), 0 0 18px rgba(200, 241, 105, .7); animation: pulse 2.8s infinite ease-in-out; }
 		.node::after { position: absolute; top: 2px; left: 2px; width: 2px; height: 2px; border-radius: 50%; background: var(--acid); content: ''; }
+		.node-label { position: absolute; top: 16px; left: 50%; padding: 3px 7px; color: var(--ink); border: 1px solid var(--line); border-radius: 2px; background: rgba(13, 17, 12, .85); font: 10px 'DM Mono', monospace; font-style: normal; letter-spacing: .02em; white-space: nowrap; transform: translateX(-50%); }
 		.node.one { top: 39%; left: 31%; } .node.two { top: 64%; left: 54%; animation-delay: .7s; } .node.three { top: 32%; left: 71%; animation-delay: 1.3s; } .node.four { top: 70%; left: 78%; animation-delay: 1.8s; }
 		.thread { position: absolute; height: 1px; transform-origin: left center; background: linear-gradient(90deg, rgba(200,241,105,.7), transparent); }
 		.thread.a { top: 41%; left: 32%; width: 27%; transform: rotate(28deg); } .thread.b { top: 66%; left: 55%; width: 25%; transform: rotate(-26deg); } .thread.c { top: 34%; left: 72%; width: 21%; transform: rotate(108deg); }
@@ -224,10 +225,13 @@
 
 			<section class="workspace" id="workspace" aria-label="Network overview">
 				<div class="panel map" id="activity">
-					<div class="map-head"><span>LIVE TOPOLOGY</span><span>REGION / GLOBAL</span></div>
+					<div class="map-head"><span>LIVE TOPOLOGY</span><span>SOURCE REGIONS</span></div>
 					<span class="thread a" aria-hidden="true"></span><span class="thread b" aria-hidden="true"></span><span class="thread c" aria-hidden="true"></span>
-					<span class="node one" aria-label="Active node"></span><span class="node two" aria-label="Active node"></span><span class="node three" aria-label="Active node"></span><span class="node four" aria-label="Active node"></span>
-					<div class="map-foot"><span>LAST PULSE <strong>00:04 AGO</strong></span><span>ZOOM 1.4×</span></div>
+					<span class="node one" aria-label="Traffic source: New York, US"><em class="node-label">New York, US</em></span>
+					<span class="node two" aria-label="Traffic source: London, UK"><em class="node-label">London, UK</em></span>
+					<span class="node three" aria-label="Traffic source: Singapore"><em class="node-label">Singapore</em></span>
+					<span class="node four" aria-label="Traffic source: São Paulo, BR"><em class="node-label">São Paulo, BR</em></span>
+					<div class="map-foot"><span>LAST PULSE <strong>00:04 AGO</strong></span><span>TOP REGION <strong>NORTH AMERICA</strong></span></div>
 				</div>
 				<div class="panel metrics" aria-label="Network metrics">
 					<div class="metric"><span class="metric-label">Active nodes</span><span class="metric-value">2,841 <small>+12%</small></span></div>
