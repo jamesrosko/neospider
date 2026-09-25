@@ -14,20 +14,22 @@
 			--muted: #929b98;
 			--line: rgba(170, 205, 200, .16);
 			--panel: rgba(27, 32, 34, .82);
-			--acid: #ffb547;
-			--acid-deep: #c78625;
-			--orange: #78d6c6;
+			--acid: #c8f169;
+			--acid-deep: #7a9a2e;
+			--orange: #e0a054;
 			--canvas: #111416;
 		}
 
 		* { box-sizing: border-box; }
+
+		.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 		body {
 			margin: 0;
 			min-width: 320px;
 			color: var(--ink);
 			background:
-				radial-gradient(circle at 79% 12%, rgba(218, 142, 42, .2), transparent 26rem),
+				radial-gradient(circle at 79% 12%, rgba(159, 194, 80, .2), transparent 26rem),
 				linear-gradient(135deg, #111416 0%, #1b2022 54%, #0d1011 100%);
 			font-family: 'Space Grotesk', sans-serif;
 		}
@@ -274,6 +276,7 @@ SIGNALS   3 items need review</code></pre>
 				<form class="signup-form" id="signup-form" action="https://formsubmit.co/neospider.leads@gmail.com" method="POST">
 					<input type="hidden" name="_subject" value="New NeoSpider example plan request">
 					<input type="hidden" name="_template" value="table">
+					<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 					<label>Email address<input id="signup-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
 					<label>Website domain<input id="signup-domain" name="domain" type="text" placeholder="yourdomain.com" autocomplete="url" required></label>
 					<label class="full">What should we help with?<select id="signup-service" name="service"><option>High-intent landing page</option><option>Search preview rewrite</option><option>Content strategy</option><option>Full traffic review</option></select></label>
