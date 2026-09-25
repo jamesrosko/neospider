@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#10130f">
-	<meta name="description" content="NeoSpider network intelligence workspace.">
-	<title>NeoSpider | Network intelligence</title>
+	<meta name="description" content="NeoSpider is simple, privacy-conscious website analytics for understanding traffic, pages, and trends without the complexity of Google Analytics.">
+	<title>NeoSpider | Simple website analytics</title>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
@@ -99,9 +99,70 @@
 		.metric-label { color: var(--muted); font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
 		.metric-value { margin-top: 18px; font-size: 36px; line-height: 1; letter-spacing: -.06em; }
 		.metric-value small { margin-left: 5px; color: var(--acid); font: 12px 'DM Mono', monospace; letter-spacing: 0; }
+		.demo { margin-top: 76px; padding: 24px; border: 1px solid rgba(200, 241, 105, .3); background: rgba(24, 32, 18, .7); }
+		.demo-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+		.demo-heading h2 { margin: 0; font-size: 23px; letter-spacing: -.04em; }
+		.demo-heading p { max-width: 430px; margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+		.example-tag { flex: 0 0 auto; padding: 6px 8px; color: var(--acid); border: 1px solid rgba(200, 241, 105, .35); font: 10px 'DM Mono', monospace; letter-spacing: .08em; }
+		.scan-form { display: flex; gap: 10px; }
+		.scan-form input { flex: 1; min-width: 0; padding: 14px 15px; color: var(--ink); border: 1px solid var(--line); border-radius: 3px; outline: 0; background: #10150d; font: 13px 'DM Mono', monospace; }
+		.scan-form input:focus { border-color: var(--acid-deep); box-shadow: 0 0 0 3px rgba(200, 241, 105, .08); }
+		.scan-form button { padding: 0 18px; color: #161b11; border-radius: 3px; background: var(--acid); }
+		.scan-form button:hover { background: #d9ff81; }
+		.scan-note { margin: 13px 0 0; color: var(--muted); font: 11px 'DM Mono', monospace; }
+		.report { display: none; margin-top: 22px; border-top: 1px solid var(--line); }
+		.report.visible { display: block; animation: reveal .35s ease-out both; }
+		.report-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+		.report-top h3 { margin: 0; font: 500 16px 'DM Mono', monospace; }
+		.report-top span { color: var(--acid); font: 10px 'DM Mono', monospace; text-transform: uppercase; }
+		.report-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); }
+		.report-cell { min-height: 92px; padding: 14px; background: #151c11; }
+		.report-cell span { display: block; color: var(--muted); font: 10px 'DM Mono', monospace; text-transform: uppercase; }
+		.report-cell strong { display: block; margin-top: 17px; font-size: 17px; font-weight: 500; }
+		.report-foot { margin: 16px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.ai-brief { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+		.ai-brief-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+		.ai-brief-head h4 { margin: 0; font-size: 18px; font-weight: 500; letter-spacing: -.03em; }
+		.ai-label { color: var(--acid); font: 10px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+		.ai-brief-intro { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.recommendations { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); }
+		.recommendation { min-height: 175px; padding: 17px; background: #151c11; }
+		.recommendation-top { display: flex; justify-content: space-between; color: var(--acid); font: 10px 'DM Mono', monospace; }
+		.recommendation h5 { margin: 22px 0 9px; font-size: 15px; font-weight: 500; line-height: 1.2; }
+		.recommendation p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.recommendation a { display: inline-block; margin-top: 14px; color: var(--acid); font: 11px 'DM Mono', monospace; text-decoration: none; }
+		.recommendation a:hover { color: var(--ink); }
+		.signup { display: grid; grid-template-columns: .85fr 1.15fr; gap: 34px; margin-top: 76px; padding: 28px; border: 1px solid rgba(200, 241, 105, .3); background: rgba(24, 32, 18, .7); }
+		.signup-copy h2 { max-width: 360px; margin: 0; font-size: 36px; line-height: .98; letter-spacing: -.06em; }
+		.signup-copy p { max-width: 370px; margin: 18px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+		.signup-tag { display: inline-block; margin-bottom: 18px; color: var(--acid); font: 10px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+		.signup-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+		.signup-form label { display: block; color: var(--muted); font: 10px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+		.signup-form input, .signup-form select { width: 100%; margin-top: 8px; padding: 13px 12px; color: var(--ink); border: 1px solid var(--line); border-radius: 3px; outline: 0; background: #10150d; font: 12px 'DM Mono', monospace; }
+		.signup-form input:focus, .signup-form select:focus { border-color: var(--acid-deep); box-shadow: 0 0 0 3px rgba(200, 241, 105, .08); }
+		.signup-form .full { grid-column: 1 / -1; }
+		.signup-form button { min-height: 45px; color: #161b11; border-radius: 3px; background: var(--acid); }
+		.signup-form button:hover { background: #d9ff81; }
+		.signup-note { grid-column: 1 / -1; margin: 0; color: var(--muted); font: 10px/1.5 'DM Mono', monospace; }
+		.signup-status { display: none; grid-column: 1 / -1; padding: 12px; color: var(--acid); border: 1px solid rgba(200, 241, 105, .25); font: 11px 'DM Mono', monospace; }
+		.signup-status.visible { display: block; }
+		.examples { display: grid; grid-template-columns: .9fr 1.1fr; gap: 16px; margin-top: 16px; }
+		.example-panel { padding: 22px; border: 1px solid var(--line); background: var(--panel); }
+		.example-panel h2 { margin: 0 0 8px; font-size: 18px; letter-spacing: -.03em; }
+		.example-panel > p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+		pre { overflow: auto; margin: 0; padding: 16px; color: #cfe9a0; border: 1px solid var(--line); background: #0d110c; font: 11px/1.7 'DM Mono', monospace; }
+		pre code { font: inherit; }
+		.why { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; gap: 1px; margin-top: 16px; border: 1px solid var(--line); background: var(--line); }
+		.why-intro, .why-item { min-height: 150px; padding: 20px; background: #151c11; }
+		.why-intro h2 { max-width: 190px; margin: 0; font-size: 23px; line-height: 1.05; letter-spacing: -.05em; }
+		.why-intro p, .why-item p { margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.why-item span { color: var(--acid); font: 11px 'DM Mono', monospace; }
+		.why-item h3 { margin: 22px 0 0; font-size: 15px; font-weight: 500; }
+		@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 		.footer-line { display: flex; justify-content: space-between; padding-top: 25px; color: var(--muted); font: 11px 'DM Mono', monospace; }
-		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .footer-line { gap: 12px; flex-direction: column; } }
+		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .demo, .signup { margin-top: 55px; padding: 18px; } .demo-heading, .report-top { align-items: flex-start; flex-direction: column; } .scan-form { flex-direction: column; } .scan-form button { min-height: 45px; } .report-grid, .examples, .why, .recommendations { grid-template-columns: 1fr 1fr; } .why-intro { grid-column: 1 / -1; min-height: auto; } .signup { grid-template-columns: 1fr; gap: 24px; } .footer-line { gap: 12px; flex-direction: column; } }
+		@media (max-width: 430px) { .report-grid, .examples, .recommendations, .signup-form { grid-template-columns: 1fr; } .signup-form .full, .signup-note, .signup-status { grid-column: auto; } }
 	</style>
 </head>
 <body>
@@ -119,13 +180,45 @@
 		</header>
 
 		<main id="top">
-			<p class="eyebrow">Network intelligence / 01</p>
-			<h1>See what<br>moves <em>beneath.</em></h1>
-			<p class="intro">NeoSpider maps the hidden relationships in your network, so signals become context and context becomes your next move.</p>
+			<p class="eyebrow">Simple website analytics / 01</p>
+			<h1>Know your<br>website <em>better.</em></h1>
+			<p class="intro">NeoSpider helps you understand how people use your website, with clear traffic reports and useful answers without the complexity of Google Analytics.</p>
 			<div class="actions">
 				<button class="primary" type="button" onclick="document.getElementById('workspace').scrollIntoView({ behavior: 'smooth' })">Open workspace <span aria-hidden="true">↗</span></button>
-				<button class="secondary" type="button" onclick="window.alert('New scan is ready to configure.')">Start a scan</button>
+				<button class="secondary" type="button" onclick="document.getElementById('demo').scrollIntoView({ behavior: 'smooth' }); document.getElementById('domain').focus()">Start a demo scan</button>
 			</div>
+
+			<section class="demo" id="demo" aria-labelledby="demo-title">
+				<div class="demo-heading">
+					<div><h2 id="demo-title">Try a sample report</h2><p>Enter any domain to preview the kind of report NeoSpider could generate. This is simulated data, not a live scan.</p></div>
+					<span class="example-tag">DEMO MODE / FICTIONAL RESULTS</span>
+				</div>
+				<form class="scan-form" id="scan-form">
+					<label class="sr-only" for="domain">Domain name</label>
+					<input id="domain" name="domain" type="text" value="example.com" placeholder="yourdomain.com" inputmode="url" required>
+					<button type="submit">Generate example</button>
+				</form>
+				<p class="scan-note">No request is sent. The page creates a local mock report using your domain name.</p>
+				<div class="report" id="report" aria-live="polite">
+					<div class="report-top"><h3>Example report / <span id="report-domain">example.com</span></h3><span>Sample generated now</span></div>
+					<div class="report-grid">
+						<div class="report-cell"><span>Health score</span><strong>92 / 100</strong></div>
+						<div class="report-cell"><span>Estimated visits</span><strong>24.8k / mo</strong></div>
+						<div class="report-cell"><span>Top source</span><strong>Organic search</strong></div>
+						<div class="report-cell"><span>Open signals</span><strong style="color: var(--orange)">03 review</strong></div>
+					</div>
+					<p class="report-foot">A real NeoSpider report would combine verified site checks with owner-installed analytics. Traffic figures shown here are examples only.</p>
+					<div class="ai-brief">
+						<div class="ai-brief-head"><h4>Ways to improve your traffic</h4><span class="ai-label">AI GROWTH BRIEF / EXAMPLE</span></div>
+						<p class="ai-brief-intro">Based on this example's traffic patterns, NeoSpider would prioritize these three actions to attract more relevant visitors.</p>
+						<div class="recommendations">
+							<article class="recommendation"><div class="recommendation-top"><span>01 / HIGH IMPACT</span><span>SEO</span></div><h5>Build a page for high-intent visitors</h5><p>Create a focused landing page around the service your best visitors are searching for, with one clear next step.</p><a href="#signup" data-service="High-intent landing page">Get help with this →</a></article>
+							<article class="recommendation"><div class="recommendation-top"><span>02 / QUICK WIN</span><span>CLARITY</span></div><h5>Rewrite your search preview</h5><p>Make the title and description of your top page specific to its audience so the right people know what they will find.</p><a href="#signup" data-service="Search preview rewrite">Get help with this →</a></article>
+							<article class="recommendation"><div class="recommendation-top"><span>03 / COMPOUND</span><span>CONTENT</span></div><h5>Answer the questions visitors ask</h5><p>Turn recurring search terms and referral questions into useful articles that bring qualified traffic back over time.</p><a href="#signup" data-service="Content strategy">Get help with this →</a></article>
+						</div>
+					</div>
+				</div>
+			</section>
 
 			<section class="workspace" id="workspace" aria-label="Network overview">
 				<div class="panel map" id="activity">
@@ -141,8 +234,87 @@
 				</div>
 			</section>
 
+			<section class="examples" aria-label="Service examples">
+				<div class="example-panel">
+					<h2>Owner analytics snippet</h2>
+					<p>Example installation code a customer could add to their site. It is inactive until the service is connected.</p>
+					<pre><code>&lt;!-- NeoSpider Analytics --&gt;
+&lt;script defer
+  data-site="your-site-id"
+  src="https://cdn.neospider.app/analytics.js"&gt;
+&lt;/script&gt;</code></pre>
+				</div>
+				<div class="example-panel">
+					<h2>Sample deliverable</h2>
+					<p>A real customer could receive a report like this after connecting their domain and analytics snippet.</p>
+					<pre><code>NEOSPIDER SITE REPORT / EXAMPLE
+DOMAIN    example.com
+PERIOD    Last 30 days
+
+TRAFFIC   24,800 visits  (+18.4%)
+TOP PAGE  /pricing
+SOURCE    Organic search (61%)
+SIGNALS   3 items need review</code></pre>
+				</div>
+			</section>
+
+			<section class="why" aria-label="Why use NeoSpider">
+				<div class="why-intro"><h2>Analytics that gets out of the way.</h2><p>Built for owners who want useful answers, not another system to manage.</p></div>
+				<div class="why-item"><span>01 / FOCUSED</span><h3>See what matters</h3><p>Understand visits, pages, sources, and trends in one calm dashboard.</p></div>
+				<div class="why-item"><span>02 / PRIVATE</span><h3>Respect visitors</h3><p>Collect only the information you need, with privacy as a product feature.</p></div>
+				<div class="why-item"><span>03 / CLEAR</span><h3>Skip the maze</h3><p>Spend less time configuring reports and more time improving your site.</p></div>
+			</section>
+
+			<section class="signup" id="signup" aria-labelledby="signup-title">
+				<div class="signup-copy">
+					<span class="signup-tag">Next step / work with us</span>
+					<h2 id="signup-title">Turn insight into better traffic.</h2>
+					<p>Tell us where to send your example report and what you want to improve. We will use this information to shape a tailored NeoSpider service.</p>
+				</div>
+				<form class="signup-form" id="signup-form" action="https://formsubmit.co/neospider.leads@gmail.com" method="POST">
+					<input type="hidden" name="_subject" value="New NeoSpider example plan request">
+					<input type="hidden" name="_template" value="table">
+					<label>Email address<input id="signup-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required></label>
+					<label>Website domain<input id="signup-domain" name="domain" type="text" placeholder="yourdomain.com" autocomplete="url" required></label>
+					<label class="full">What should we help with?<select id="signup-service" name="service"><option>High-intent landing page</option><option>Search preview rewrite</option><option>Content strategy</option><option>Full traffic review</option></select></label>
+					<button class="full" type="submit">Request an example plan ↗</button>
+					<p class="signup-note">Submissions are forwarded to neospider.leads@gmail.com via FormSubmit. Please do not include sensitive information.</p>
+					<p class="signup-status" id="signup-status" role="status">Thanks. Your example request is ready to be connected to a real signup service.</p>
+				</form>
+			</section>
+
 			<div class="footer-line"><span>BUILD 2.4.0 / NEO CORE</span><span>© 2025 NEOSPIDER LABS</span></div>
 		</main>
 	</div>
+	<script>
+		const scanForm = document.getElementById('scan-form');
+		const domainInput = document.getElementById('domain');
+		const report = document.getElementById('report');
+		const reportDomain = document.getElementById('report-domain');
+		const signupForm = document.getElementById('signup-form');
+		const signupDomain = document.getElementById('signup-domain');
+		const signupService = document.getElementById('signup-service');
+
+		scanForm.addEventListener('submit', (event) => {
+			event.preventDefault();
+			const domain = domainInput.value.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '') || 'example.com';
+			reportDomain.textContent = domain;
+			report.classList.add('visible');
+			report.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		});
+
+		document.querySelectorAll('[data-service]').forEach((link) => {
+			link.addEventListener('click', () => {
+				signupService.value = link.dataset.service;
+				signupDomain.value = domainInput.value.trim();
+			});
+		});
+
+		signupForm.addEventListener('submit', (event) => {
+			const submitButton = signupForm.querySelector('button[type="submit"]');
+			submitButton.textContent = 'Sending request...';
+			submitButton.disabled = true;
+		});
+	</script>
 </body>
 </html>
