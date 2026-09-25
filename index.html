@@ -161,11 +161,20 @@
 		.why-intro p, .why-item p { margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 		.why-item span { color: var(--acid); font: 11px 'DM Mono', monospace; }
 		.why-item h3 { margin: 22px 0 0; font-size: 15px; font-weight: 500; }
+		.testimonials { margin-top: 16px; }
+		.testimonials-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
+		.testimonials-heading h2 { margin: 0; font-size: 23px; letter-spacing: -.05em; }
+		.testimonials-heading p { max-width: 390px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+		.testimonial { min-height: 220px; padding: 20px; background: #151c11; }
+		.testimonial-label { color: var(--orange); font: 10px 'DM Mono', monospace; letter-spacing: .12em; }
+		.testimonial blockquote { margin: 28px 0 22px; font-size: 16px; line-height: 1.4; letter-spacing: -.02em; }
+		.testimonial cite { color: var(--muted); font: 11px 'DM Mono', monospace; font-style: normal; }
 		@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 		.footer-line { display: flex; justify-content: space-between; padding-top: 25px; color: var(--muted); font: 11px 'DM Mono', monospace; }
-		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .demo, .signup { margin-top: 55px; padding: 18px; } .demo-heading, .report-top { align-items: flex-start; flex-direction: column; } .scan-form { flex-direction: column; } .scan-form button { min-height: 45px; } .report-grid, .examples, .why, .recommendations { grid-template-columns: 1fr 1fr; } .why-intro { grid-column: 1 / -1; min-height: auto; } .signup { grid-template-columns: 1fr; gap: 24px; } .footer-line { gap: 12px; flex-direction: column; } }
-		@media (max-width: 430px) { .report-grid, .examples, .recommendations, .signup-form { grid-template-columns: 1fr; } .signup-form .full, .signup-note, .signup-status { grid-column: auto; } }
+		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .demo, .signup { margin-top: 55px; padding: 18px; } .demo-heading, .report-top, .testimonials-heading { align-items: flex-start; flex-direction: column; } .scan-form { flex-direction: column; } .scan-form button { min-height: 45px; } .report-grid, .examples, .why, .recommendations, .testimonial-grid { grid-template-columns: 1fr 1fr; } .why-intro { grid-column: 1 / -1; min-height: auto; } .signup { grid-template-columns: 1fr; gap: 24px; } .footer-line { gap: 12px; flex-direction: column; } }
+		@media (max-width: 430px) { .report-grid, .examples, .recommendations, .testimonial-grid, .signup-form { grid-template-columns: 1fr; } .signup-form .full, .signup-note, .signup-status { grid-column: auto; } }
 	</style>
 </head>
 <body>
@@ -178,6 +187,7 @@
 			<nav aria-label="Primary navigation">
 				<a href="#workspace">Workspace</a>
 				<a href="#activity">Activity</a>
+				<a href="#testimonials">Testimonials</a>
 				<span class="status"><i></i>System online</span>
 			</nav>
 		</header>
@@ -273,6 +283,30 @@ SIGNALS   3 items need review</code></pre>
 				<div class="why-item"><span>02 / PRIVATE</span><h3>Respect visitors</h3><p>Collect only the information you need, with privacy as a product feature.</p></div>
 				<div class="why-item"><span>03 / CLEAR</span><h3>Skip the maze</h3><p>Spend less time configuring reports and more time improving your site.</p></div>
 				<div class="why-item"><span>04 / VERIFIED</span><h3>Filter out the noise</h3><p>Crawlers, scrapers, and monitoring bots are automatically excluded, so every number reflects real visitors.</p></div>
+			</section>
+
+			<section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+				<div class="testimonials-heading">
+					<h2 id="testimonials-title">Customer testimonials</h2>
+					<p>Illustrative customer feedback for the NeoSpider concept. Every quote below is an example.</p>
+				</div>
+				<div class="testimonial-grid">
+					<article class="testimonial">
+						<span class="testimonial-label">EXAMPLE / TESTIMONIAL 01</span>
+						<blockquote>“I finally know which pages are bringing people in without spending a week configuring reports.”</blockquote>
+						<cite>Example customer / Independent studio</cite>
+					</article>
+					<article class="testimonial">
+						<span class="testimonial-label">EXAMPLE / TESTIMONIAL 02</span>
+						<blockquote>“The weekly signals make it obvious what deserves attention and what is just noise.”</blockquote>
+						<cite>Example customer / Product consultant</cite>
+					</article>
+					<article class="testimonial">
+						<span class="testimonial-label">EXAMPLE / TESTIMONIAL 03</span>
+						<blockquote>“It gives me the useful parts of analytics in a dashboard I actually want to open.”</blockquote>
+						<cite>Example customer / Small ecommerce team</cite>
+					</article>
+				</div>
 			</section>
 
 			<section class="signup" id="signup" aria-labelledby="signup-title">
