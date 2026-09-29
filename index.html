@@ -174,8 +174,8 @@
 		@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 		.footer-line { display: flex; justify-content: space-between; padding-top: 25px; color: var(--muted); font: 11px 'DM Mono', monospace; }
-		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .demo, .signup { margin-top: 55px; padding: 18px; } .demo-heading, .report-top, .testimonials-heading { align-items: flex-start; flex-direction: column; } .scan-form { flex-direction: column; } .scan-form button { min-height: 45px; } .report-grid, .examples, .why, .recommendations, .testimonial-grid { grid-template-columns: 1fr 1fr; } .why-intro { grid-column: 1 / -1; min-height: auto; } .signup { grid-template-columns: 1fr; gap: 24px; } .footer-line { gap: 12px; flex-direction: column; } }
-		@media (max-width: 430px) { .report-grid, .examples, .recommendations, .testimonial-grid, .signup-form { grid-template-columns: 1fr; } .signup-form .full, .signup-note, .signup-status { grid-column: auto; } }
+		@media (max-width: 720px) { .shell { width: min(100% - 32px, 1280px); } header { min-height: 72px; } nav a, nav .status { display: none; } main { padding-top: 58px; } h1 { font-size: clamp(52px, 16vw, 82px); } .workspace { grid-template-columns: 1fr; margin-top: 55px; } .map { min-height: 320px; } .demo, .signup { margin-top: 55px; padding: 18px; } .demo-heading, .report-top, .testimonials-heading { align-items: flex-start; flex-direction: column; } .scan-form { flex-direction: column; } .scan-form button { min-height: 45px; } .report-grid, .examples, .why, .testimonial-grid { grid-template-columns: 1fr 1fr; } .why-intro { grid-column: 1 / -1; min-height: auto; } .signup { grid-template-columns: 1fr; gap: 24px; } .footer-line { gap: 12px; flex-direction: column; } }
+		@media (max-width: 430px) { .report-grid, .examples, .testimonial-grid, .signup-form { grid-template-columns: 1fr; } .signup-form .full, .signup-note, .signup-status { grid-column: auto; } }
 	</style>
 </head>
 <body>
@@ -225,10 +225,12 @@
 					</div>
 					<p class="report-foot">The score starts at 50 when there is not enough historical traffic to establish a trend. Once data accumulates, it compares pageviews and visitors with the previous seven days.</p>
 					<div class="ai-brief">
-						<div class="ai-brief-head"><h4>Improvement suggestion</h4><span class="ai-label">AI INSIGHT / FALLBACK EXAMPLE</span></div>
+						<div class="ai-brief-head"><h4>Top 3 improvement suggestions</h4><span class="ai-label">AI INSIGHT / FALLBACK EXAMPLE</span></div>
 						<p class="ai-brief-intro">When custom AI output is unavailable, NeoSpider provides a useful general recommendation based on the report data.</p>
 						<div class="recommendations">
-							<article class="recommendation"><div class="recommendation-top"><span>01 / GENERAL</span><span>SEO</span></div><h5>Bring more visitors to your site</h5><p>No pageviews were recorded for this report period. Check that the tracking snippet is installed on every important page, then review your search visibility and referral links.</p><a href="#signup" data-service="Traffic and search visibility review">Get help with this →</a></article>
+							<article class="recommendation"><div class="recommendation-top"><span>01 / TRACKING</span><span>ANALYTICS</span></div><h5>Confirm visits are being recorded</h5><p>No pageviews were recorded for this report period. Check that the tracking snippet is installed on every important page, then visit your site and confirm the visit appears in your analytics.</p><a href="#signup" data-service="Full traffic review">Get help with this →</a></article>
+							<article class="recommendation"><div class="recommendation-top"><span>02 / CONTENT</span><span>LANDING PAGE</span></div><h5>Make your main page easier to act on</h5><p>Choose the page visitors should start with and give it one clear next step, such as viewing a key product or contacting your team.</p><a href="#signup" data-service="High-intent landing page">Get help with this →</a></article>
+							<article class="recommendation"><div class="recommendation-top"><span>03 / SEARCH</span><span>SEO</span></div><h5>Improve how your pages appear in search</h5><p>Review the title and description for your most important page so searchers can quickly understand what it offers and why it is relevant.</p><a href="#signup" data-service="Search preview rewrite">Get help with this →</a></article>
 						</div>
 					</div>
 				</div>
