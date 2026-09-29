@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#111416">
-	<meta name="description" content="Backend system architecture diagram for the NeoSpider website analytics tool.">
+	<meta name="description" content="Backend system architecture diagram for the NeoSpider website analytics tool, including the daily report RAG pipeline.">
 	<title>NeoSpider | Backend architecture</title>
 	<script defer src="https://api.neospider.com/neospider.js" data-site="key1"></script>
 	<style>
@@ -96,6 +96,11 @@
 		.note-item h3 { margin: 14px 0 8px; font-size: 14px; font-weight: 500; }
 		.note-item p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 
+		.section-head { margin: 72px 0 0; padding-top: 34px; border-top: 1px solid var(--line); }
+		.section-head h2 { margin: 0; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.04; letter-spacing: -.045em; font-weight: 600; }
+		.section-head h2 em { color: var(--acid); font-style: normal; }
+		.section-head p { max-width: 640px; margin: 18px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
 		.footer-line { display: flex; justify-content: space-between; padding-top: 30px; margin-top: 40px; border-top: 1px solid var(--line); color: var(--muted); font: 11px 'DM Mono', monospace; }
 		.footer-line a { color: var(--muted); }
 
@@ -124,7 +129,7 @@
 		<main>
 			<p class="eyebrow">System design / 02</p>
 			<h1>Backend <em>architecture.</em></h1>
-			<p class="intro">A high-level view of how a request flows through the NeoSpider analytics backend — from the tracking script hitting the API, through storage and processing, to what the customer sees in their dashboard and exported reports.</p>
+			<p class="intro">A high-level view of how a request flows through the NeoSpider analytics backend — from the tracking script hitting the API, through storage and processing, to what the customer sees in their dashboard and exported reports. The AI pipeline behind the daily report is broken out in a second diagram below.</p>
 
 			<div class="diagram-panel">
 				<div class="diagram-panel-head">
@@ -198,7 +203,7 @@
 						<rect x="645" y="560" width="220" height="90" rx="3" class="node-box highlight"></rect>
 						<text x="665" y="588" class="node-index">03A / AI</text>
 						<text x="665" y="612" class="node-title">AI pipeline</text>
-						<text x="665" y="632" class="node-sub">Summaries &amp; insights</text>
+						<text x="665" y="632" class="node-sub">Retrieval-grounded drafts</text>
 					</g>
 
 					<!-- Tracked Website -> API (tracking snippet) -->
@@ -286,7 +291,189 @@
 				<div class="note-item">
 					<span>03A / AI</span>
 					<h3>AI pipeline</h3>
-					<p>Branches off the analytics engine to generate plain-language summaries and insights, which the report exporter includes alongside the raw metrics.</p>
+					<p>Branches off the analytics engine to draft plain-language insights. Retrieves supporting material before it generates, so suggestions are tied to the day's real numbers rather than generic advice. Broken out below.</p>
+				</div>
+			</div>
+
+			<div class="section-head">
+				<h2>Daily report &amp; <em>RAG pipeline.</em></h2>
+				<p>A closer look at <strong>03A / AI</strong>. Every night a cron job builds yesterday's report for each active site. Before the model writes anything, the day's metrics are turned into a question and used to pull supporting material from two pools — a shared optimisation playbook and the site's own recent reports — which is injected into the prompt as reference material.</p>
+			</div>
+
+			<div class="diagram-panel">
+				<div class="diagram-panel-head">
+					<h2>Nightly generation flow</h2>
+					<span class="tag">03A / AI</span>
+				</div>
+
+				<svg viewBox="0 0 1200 880" role="img" aria-labelledby="ragTitle ragDesc">
+					<title id="ragTitle">NeoSpider daily report RAG pipeline diagram</title>
+					<desc id="ragDesc">A nightly cron trigger collects the day's metrics, which are rewritten as a retrieval query. The query is embedded and matched against a vector index of playbook guidance, while the site's last three reports are read separately by recency. Both feed prompt assembly, then the suggestion model, which produces the daily report. The finished report is recorded back into report history without being embedded.</desc>
+
+					<defs>
+						<marker id="rag-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+							<path d="M0,0 L10,5 L0,10 z" class="arrowhead"></path>
+						</marker>
+						<marker id="rag-arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+							<path d="M0,0 L10,5 L0,10 z" class="arrowhead orange"></path>
+						</marker>
+					</defs>
+
+					<!-- 01 Nightly trigger -->
+					<g>
+						<rect x="480" y="40" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="500" y="68" class="node-index">01 / TRIGGER</text>
+						<text x="500" y="92" class="node-title">Nightly trigger</text>
+						<text x="500" y="112" class="node-sub">cron 03:10 UTC</text>
+					</g>
+
+					<!-- 02 Day's metrics -->
+					<g>
+						<rect x="480" y="180" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="500" y="208" class="node-index">02 / METRICS</text>
+						<text x="500" y="232" class="node-title">Day's metrics</text>
+						<text x="500" y="252" class="node-sub">pages, referrers, trend</text>
+					</g>
+
+					<!-- 03 Retrieval query -->
+					<g>
+						<rect x="480" y="320" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="500" y="348" class="node-index">03 / QUERY</text>
+						<text x="500" y="372" class="node-title">Retrieval query</text>
+						<text x="500" y="392" class="node-sub">metrics as a question</text>
+					</g>
+
+					<!-- 04 Embedding model -->
+					<g>
+						<rect x="840" y="320" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="860" y="348" class="node-index">04 / EMBED</text>
+						<text x="860" y="372" class="node-title">Embedding model</text>
+						<text x="860" y="392" class="node-sub">bge-base-en-v1.5</text>
+					</g>
+
+					<!-- 05 Vector index -->
+					<g>
+						<rect x="840" y="460" width="240" height="88" rx="3" class="node-box highlight"></rect>
+						<text x="860" y="488" class="node-index">05 / INDEX</text>
+						<text x="860" y="512" class="node-title">Vector index</text>
+						<text x="860" y="532" class="node-sub">playbook, by similarity</text>
+					</g>
+
+					<!-- 06 Report history -->
+					<g>
+						<rect x="120" y="460" width="240" height="88" rx="3" class="node-box highlight"></rect>
+						<text x="140" y="488" class="node-index">06 / HISTORY</text>
+						<text x="140" y="512" class="node-title">Report history</text>
+						<text x="140" y="532" class="node-sub">last 3, by recency</text>
+					</g>
+
+					<!-- 07 Prompt assembly -->
+					<g>
+						<rect x="480" y="460" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="500" y="488" class="node-index">07 / PROMPT</text>
+						<text x="500" y="512" class="node-title">Prompt assembly</text>
+						<text x="500" y="532" class="node-sub">reference material + data</text>
+					</g>
+
+					<!-- 08 Suggestion model -->
+					<g>
+						<rect x="480" y="600" width="240" height="88" rx="3" class="node-box highlight"></rect>
+						<text x="500" y="628" class="node-index">08 / MODEL</text>
+						<text x="500" y="652" class="node-title">Suggestion model</text>
+						<text x="500" y="672" class="node-sub">swappable base + LoRA</text>
+					</g>
+
+					<!-- 09 Daily report -->
+					<g>
+						<rect x="480" y="740" width="240" height="88" rx="3" class="node-box"></rect>
+						<text x="500" y="768" class="node-index">09 / REPORT</text>
+						<text x="500" y="792" class="node-title">Daily report</text>
+						<text x="500" y="812" class="node-sub">score + 3 suggestions</text>
+					</g>
+
+					<!-- Trigger -> Metrics -->
+					<path d="M 600 130 L 600 176" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="608" y="158" class="flow-label">per active site</text>
+
+					<!-- Metrics -> Query -->
+					<path d="M 600 270 L 600 316" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="608" y="298" class="flow-label">aggregate</text>
+
+					<!-- Query -> Embedding model -->
+					<path d="M 722 364 L 836 364" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="779" y="352" class="flow-label" text-anchor="middle">question</text>
+
+					<!-- Embedding model -> Vector index -->
+					<path d="M 960 410 L 960 456" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="968" y="438" class="flow-label">vector</text>
+
+					<!-- Vector index -> Prompt assembly -->
+					<path d="M 838 504 L 724 504" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="781" y="492" class="flow-label" text-anchor="middle">top-k playbook</text>
+
+					<!-- Report history -> Prompt assembly -->
+					<path d="M 362 504 L 476 504" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="419" y="492" class="flow-label" text-anchor="middle">last 3 reports</text>
+
+					<!-- Prompt assembly -> Suggestion model -->
+					<path d="M 600 550 L 600 596" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="608" y="578" class="flow-label">grounded prompt</text>
+
+					<!-- Suggestion model -> Daily report -->
+					<path d="M 600 690 L 600 736" class="flow-line" marker-end="url(#rag-arrow)"></path>
+					<text x="608" y="718" class="flow-label">JSON suggestions</text>
+
+					<!-- Daily report -> Report history (feedback, never embedded) -->
+					<path d="M 478 784 C 380 780, 300 700, 240 552" class="flow-line dashed" marker-end="url(#rag-arrow-orange)"></path>
+					<text x="258" y="668" class="flow-label" fill="var(--orange)">recorded, not embedded</text>
+				</svg>
+
+				<div class="legend">
+					<span class="legend-item"><span class="legend-swatch"></span> Generation path</span>
+					<span class="legend-item"><span class="legend-swatch dashed"></span> Feedback path</span>
+				</div>
+			</div>
+
+			<div class="notes">
+				<div class="note-item">
+					<span>01–02 / TRIGGER</span>
+					<h3>Trigger &amp; metrics</h3>
+					<p>A scheduled job runs nightly and walks every active site, pulling the analytics engine's aggregate for yesterday: pageviews, visitors, top pages and referrers, device and country mix, plus the previous seven days for trend context. Writes are idempotent per site and day.</p>
+				</div>
+				<div class="note-item">
+					<span>03 / QUERY</span>
+					<h3>Retrieval query</h3>
+					<p>The numbers are rewritten as a plain-language question — trend direction, busiest page, main referrer, device mix. Retrieval works on meaning, so the query has to read like prose, not like a row.</p>
+				</div>
+				<div class="note-item">
+					<span>04 / EMBED</span>
+					<h3>Embedding model</h3>
+					<p>Turns the question into a vector. The same model embedded the playbook, and embeddings from different models are not comparable, so changing it forces a full re-index.</p>
+				</div>
+				<div class="note-item">
+					<span>05 / INDEX</span>
+					<h3>Vector index</h3>
+					<p>Holds the shared optimisation playbook: performance, SEO and UX guidance written as retrievable answers. Returns the closest matches above a similarity floor; their text is read back from storage.</p>
+				</div>
+				<div class="note-item">
+					<span>06 / HISTORY</span>
+					<h3>Report history</h3>
+					<p>The site's recent reports, fetched by <em>recency</em> rather than similarity. History text echoes the site's own domain and paths, so under similarity search it would crowd out the playbook and feed the model its own output.</p>
+				</div>
+				<div class="note-item">
+					<span>07 / PROMPT</span>
+					<h3>Prompt assembly</h3>
+					<p>Retrieved text goes in as a reference block ahead of the metrics, with instructions to apply it only where it fits the numbers and not to repeat advice a recent report already gave.</p>
+				</div>
+				<div class="note-item">
+					<span>08 / MODEL</span>
+					<h3>Suggestion model</h3>
+					<p>Drafts one headline improvement plus three categorised suggestions. The base model and any fine-tuned adapter are configuration, not code — the adapter shapes tone, retrieval supplies the facts.</p>
+				</div>
+				<div class="note-item">
+					<span>09 / REPORT</span>
+					<h3>Daily report</h3>
+					<p>Stored with its trend score and the ids of every chunk that grounded it, so a suggestion can be traced back to its source. The report is then recorded as history — but never embedded, which keeps the loop from feeding on itself.</p>
 				</div>
 			</div>
 
